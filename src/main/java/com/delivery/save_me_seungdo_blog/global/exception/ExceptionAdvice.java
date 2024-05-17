@@ -15,13 +15,14 @@ public class ExceptionAdvice {
     @ExceptionHandler(CustomApiException.class)
     public ResponseEntity<?> apiException(CustomApiException e) {
         log.warn(e.getMessage());
-        return ResponseEntity.status(e.getStatusCode().value()).body(null);
+        return ResponseEntity.status(e.getStatusCode().value()).body(Api.EXCEPTION(e)
+        );
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> exception(Exception e) {
         log.error(e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Api.ERROR(e));
     }
 }
 
