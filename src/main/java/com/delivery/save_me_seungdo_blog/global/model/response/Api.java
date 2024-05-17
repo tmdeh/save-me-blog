@@ -2,10 +2,15 @@ package com.delivery.save_me_seungdo_blog.global.model.response;
 
 import com.delivery.save_me_seungdo_blog.global.exception.CustomApiException;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
+@Slf4j
 @Getter
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -31,6 +36,17 @@ public class Api<T> {
     public static Api<?> OK() {
         Result result = new Result(HttpStatus.OK.value(), "OK");
         return new Api<>(result, null);
+    }
+
+    public static Api<List<InvalidRequestResponse>> VALID_EXCEPTION(MethodArgumentNotValidException exception) {
+        List<InvalidRequestResponse> list = exception.getFieldErrors().stream().map(fieldError ->
+            new InvalidRequestResponse(fieldError.getDefaultMessage())
+        ).toList();
+
+        ProblemDetail body = exception.getBody();
+
+        Result result = new Result(body.getStatus(), body.getDetail());
+        return new Api<>(result, list);
     }
 
 

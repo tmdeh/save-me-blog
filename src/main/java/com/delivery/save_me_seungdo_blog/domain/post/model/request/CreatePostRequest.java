@@ -4,18 +4,17 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreatePostRequest {
 
-    @NotBlank
+    @NotBlank(message = "제목은 비어 있을 수 없습니다.")
     private String title;
 
-    @NotBlank
+    @NotBlank(message = "내용은 비어 있을 수 없습니다.")
     private String content;
 
 }
