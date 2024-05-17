@@ -38,11 +38,12 @@ public class Api<T> {
         return new Api<>(result, null);
     }
 
-    public static Api<List<InvalidRequestResponse>> VALID_EXCEPTION(MethodArgumentNotValidException exception) {
+    // 요청 유효성 검사
+    public static Api<List<InvalidRequestResponse>> VALID_EXCEPTION(
+        MethodArgumentNotValidException exception) {
         List<InvalidRequestResponse> list = exception.getFieldErrors().stream().map(fieldError ->
-            new InvalidRequestResponse(fieldError.getDefaultMessage())
+                new InvalidRequestResponse(fieldError.getDefaultMessage(), fieldError.getField())
         ).toList();
-
         ProblemDetail body = exception.getBody();
 
         Result result = new Result(body.getStatus(), body.getDetail());
