@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.List;
 
-import com.fc.save_me_seungdo_blog.global.exception.code.RequestErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +45,7 @@ public class Api<T> {
             MethodArgumentNotValidException exception) {
         List<InvalidRequestResponse> list = exception.getFieldErrors().stream()
                 .map(fieldError ->
-                        new InvalidRequestResponse(fieldError.getRejectedValue()+ "는 " + RequestErrorCode.TYPE_MISS_MATCH.getErrorMessage(), fieldError.getField())
+                        new InvalidRequestResponse(fieldError.getRejectedValue()+ "는 잘못된 파라미터입니다.", fieldError.getField())
         ).toList();
         ProblemDetail body = exception.getBody();
         Result result = new Result(body.getStatus(), body.getDetail());
