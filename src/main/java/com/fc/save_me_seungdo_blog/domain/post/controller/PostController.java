@@ -6,8 +6,8 @@ import com.fc.save_me_seungdo_blog.domain.post.model.response.PostResponse;
 import com.fc.save_me_seungdo_blog.domain.post.service.PostService;
 import com.fc.save_me_seungdo_blog.global.model.response.Api;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,7 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<Api<List<PostResponse>>> getAll(
+    public ResponseEntity<Api<Page<PostResponse>>> getAll(
         @Valid
         @ModelAttribute
         GetPostRequest getPostRequest

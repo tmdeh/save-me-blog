@@ -6,8 +6,8 @@ import com.fc.save_me_seungdo_blog.domain.post.model.request.GetPostRequest;
 import com.fc.save_me_seungdo_blog.domain.post.model.response.PostResponse;
 import com.fc.save_me_seungdo_blog.domain.post.repository.PostRepository;
 import com.fc.save_me_seungdo_blog.global.model.response.Api;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -37,8 +37,7 @@ public class PostService {
     }
 
 
-    public Api<List<PostResponse>> getList(GetPostRequest request) {
-        System.out.println(request);
+    public Api<Page<PostResponse>> getList(GetPostRequest request) {
 
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize(),
             Sort.by(Sort.Direction.fromString(request.getDirection().name()),
@@ -48,6 +47,7 @@ public class PostService {
             .id(post.getId())
             .title(post.getTitle())
             .content(post.getContent())
-            .build()).toList());
+            .build()));
+
     }
 }
