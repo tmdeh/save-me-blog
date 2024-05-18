@@ -34,7 +34,6 @@ public class PostController {
         @ModelAttribute
         GetPostRequest getPostRequest
     ) {
-        // TODO: enum 예외 처리
         return ResponseEntity.ok(postService.getList(getPostRequest));
     }
 
