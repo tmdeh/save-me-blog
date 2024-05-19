@@ -1,13 +1,17 @@
 package com.fc.save_me_seungdo_blog.domain.post.model.entity;
 
+import com.fc.save_me_seungdo_blog.domain.auth.model.entity.User;
 import com.fc.save_me_seungdo_blog.domain.post.model.request.UpdatePostReqeust;
 import com.fc.save_me_seungdo_blog.global.model.entity.TimeStamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -19,7 +23,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "post")
-@ToString
 public class Post extends TimeStamp {
 
     @Id
@@ -42,9 +45,9 @@ public class Post extends TimeStamp {
         this.content = reqeust.getContent();
     }
 
-//    @NotNull
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
 }

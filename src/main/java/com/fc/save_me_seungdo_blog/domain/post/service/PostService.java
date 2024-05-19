@@ -1,5 +1,7 @@
 package com.fc.save_me_seungdo_blog.domain.post.service;
 
+import com.fc.save_me_seungdo_blog.domain.auth.model.entity.User;
+import com.fc.save_me_seungdo_blog.domain.auth.repository.UserRepository;
 import com.fc.save_me_seungdo_blog.domain.post.model.entity.Post;
 import com.fc.save_me_seungdo_blog.domain.post.model.request.CreatePostRequest;
 import com.fc.save_me_seungdo_blog.domain.post.model.request.GetPostRequest;
@@ -7,6 +9,7 @@ import com.fc.save_me_seungdo_blog.domain.post.model.request.UpdatePostReqeust;
 import com.fc.save_me_seungdo_blog.domain.post.model.response.PostResponse;
 import com.fc.save_me_seungdo_blog.domain.post.repository.PostRepository;
 import com.fc.save_me_seungdo_blog.global.exception.CustomApiException;
+import com.fc.save_me_seungdo_blog.global.exception.code.AuthErrorCode;
 import com.fc.save_me_seungdo_blog.global.exception.code.PostErrorCode;
 import com.fc.save_me_seungdo_blog.global.model.response.Api;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,11 +27,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public Api<PostResponse> create(CreatePostRequest request) {
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new CustomApiException(AuthErrorCode.NOT_FOUND));
+
         Post post = postRepository.save(
             Post.builder()
+                .user(user)
                 .title(request.getTitle())
                 .content(request.getContent())
                 .build()
