@@ -8,7 +8,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class UpdatePostReqeust {
-
     @NotNull
     private Long id;
 

@@ -74,7 +74,12 @@ public class PostService {
 
     @Transactional
     public Api<PostResponse> update(UpdatePostReqeust request) {
-        Post post = postRepository.findById(request.getId())
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new CustomApiException(AuthErrorCode.NOT_FOUND));
+
+        Post post = postRepository.findByIdAndUser(request.getId(), user)
             .orElseThrow(() -> new CustomApiException(PostErrorCode.NOT_FOUND));
         post.update(request);
 
@@ -88,7 +93,11 @@ public class PostService {
 
     @Transactional
     public Api<?> delete(long id) {
-        Post post = postRepository.findById(id)
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new CustomApiException(AuthErrorCode.NOT_FOUND));
+
+        Post post = postRepository.findByIdAndUser(id, user)
             .orElseThrow(() -> new CustomApiException(PostErrorCode.NOT_FOUND));
 
         postRepository.delete(post);
