@@ -190,4 +190,23 @@ class PostServiceTest {
         assertThat(result.getBody().getContent()).isEqualTo(newContent);
     }
 
+
+    @Test
+    @DisplayName("블로그 삭제하기")
+    public void testDelete() {
+        // given
+        long id = 1L;
+        String title = "title";
+        String content = "content";
+
+        Post post = new Post(id, title, content);
+        when(postRepository.findById(id)).thenReturn(Optional.of(post));
+        // when
+        Api<?> result = postService.remove(id);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getResult().getCode()).isEqualTo(HttpStatus.OK.value());
+    }
+
 }

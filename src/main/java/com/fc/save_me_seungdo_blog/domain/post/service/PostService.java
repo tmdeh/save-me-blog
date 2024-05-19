@@ -74,4 +74,8 @@ public class PostService {
             .build()
         );
     }
+
+    public Api<?> remove(long id) {
+        return null;
+    }
 }
