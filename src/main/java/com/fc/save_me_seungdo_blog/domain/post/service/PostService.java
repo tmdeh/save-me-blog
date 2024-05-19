@@ -75,7 +75,12 @@ public class PostService {
         );
     }
 
+    @Transactional
     public Api<?> remove(long id) {
-        return null;
+        Post post = postRepository.findById(id)
+            .orElseThrow(() -> new CustomApiException(PostErrorCode.NOT_FOUND));
+
+        postRepository.delete(post);
+        return Api.OK();
     }
 }

@@ -201,10 +201,13 @@ class PostServiceTest {
 
         Post post = new Post(id, title, content);
         when(postRepository.findById(id)).thenReturn(Optional.of(post));
+
+
         // when
         Api<?> result = postService.remove(id);
 
         // then
+        verify(postRepository).delete(post);
         assertThat(result).isNotNull();
         assertThat(result.getResult().getCode()).isEqualTo(HttpStatus.OK.value());
     }
