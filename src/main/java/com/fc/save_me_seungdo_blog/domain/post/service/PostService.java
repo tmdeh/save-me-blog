@@ -43,11 +43,15 @@ public class PostService {
             Sort.by(request.getDirection().getValue(),
                 request.getSortBy().name()));
 
-        return Api.OK(postRepository.findAllByTitleContaining(request.getKeyword(), pageable).map(post -> PostResponse.builder()
-            .id(post.getId())
-            .title(post.getTitle())
-            .content(post.getContent())
-            .build()));
+        Page<PostResponse> page = postRepository.findAllByTitleContaining(request.getKeyword(), pageable).map(post -> PostResponse.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .build());
+
+
+
+        return Api.OK(page);
 
     }
 }

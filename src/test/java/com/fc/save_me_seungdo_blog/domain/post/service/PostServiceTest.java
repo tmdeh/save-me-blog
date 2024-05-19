@@ -17,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
@@ -41,7 +40,7 @@ class PostServiceTest {
 
 
     @Test
-    @DisplayName("등록 성공")
+    @DisplayName("블로그 등록하기")
     public void testCreatePost() {
         // given
         String title = "테스트 제목";
@@ -86,9 +85,9 @@ class PostServiceTest {
             GetPostRequest request = new GetPostRequest(page, size, SortByEnum.id, DirectionEnum.asc, "");
 
             PageRequest pageable = PageRequest.of(page, size, Sort.by(DirectionEnum.asc.getValue(), SortByEnum.id.name()));
-            PageImpl<Post> pageImpl = new PageImpl<>(posts.subList(start, end), pageable, postCount);
+            Page<Post> pageImpl = new PageImpl<>(posts.subList(start, end), pageable, postCount);
 
-            when(postRepository.findAll(ArgumentMatchers.any(Pageable.class))).thenReturn(pageImpl);
+            when(postRepository.findAllByTitleContaining("", pageable)).thenReturn(pageImpl);
 
             // when
             Api<Page<PostResponse>> result = postService.getList(request);
@@ -108,7 +107,7 @@ class PostServiceTest {
                 assertThat(response.getTitle()).isEqualTo(originalPost.getTitle());
                 assertThat(response.getContent()).isEqualTo(originalPost.getContent());
             }
-            verify(postRepository, times(1)).findAll(ArgumentMatchers.eq(pageable));
+            verify(postRepository, times(1)).findAllByTitleContaining("", pageable);
         }
     }
 
@@ -122,6 +121,7 @@ class PostServiceTest {
 
 
         GetPostRequest request = new GetPostRequest(0, size, SortByEnum.id, DirectionEnum.asc, targetStr);
+        PageRequest pageable = PageRequest.of(0, size, Sort.by(DirectionEnum.asc.getValue(), SortByEnum.id.name()));
 
         List<Post> posts = new ArrayList<>();
         for (int i = 0; i < postCount; i++) {
@@ -133,34 +133,30 @@ class PostServiceTest {
         }
 
 
-        List<PostResponse> targets = new ArrayList<>();
+        List<Post> targets = new ArrayList<>();
         for (int i = 0; i < postCount; i+=2) {
-            targets.add(new PostResponse((long) i, targetStr + "Title" + i, "Content" + i));
+            targets.add(posts.get(i));
         }
 
-        when(postRepository.findAll(ArgumentMatchers.any(Pageable.class))).thenReturn(new PageImpl<>(posts));
+
+        when(postRepository.findAllByTitleContaining(targetStr, pageable)).thenReturn(new PageImpl<>(targets));
 
         // when
         Api<Page<PostResponse>> list = postService.getList(request);
 
 
-        list.getBody().getContent().forEach(t -> System.out.println(t.getTitle()));
-
-
         // then
-        verify(postRepository, times(1)).findAll(ArgumentMatchers.any(Pageable.class));
+        verify(postRepository, times(1)).findAllByTitleContaining(targetStr, pageable);
 
         assertThat(list).isNotNull();
         assertThat(list.getResult().getCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(list.getBody().getTotalElements()).isEqualTo(postCount);
+        assertThat(list.getBody().getTotalElements()).isEqualTo(targets.size());
 
-        for (int i = 0; i < list.getBody().getContent().size(); i++) {
-            PostResponse response = list.getBody().getContent().get(i);
-            PostResponse target = targets.get(i);
+        for(int i = 0; i < list.getBody().getContent().size(); i++) {
+            String responseTitle = list.getBody().getContent().get(i).getTitle();
+            String targetTitle = targets.get(i).getTitle();
 
-            assertThat(response.getTitle()).isEqualTo(target.getTitle());
-            assertThat(response.getContent()).isEqualTo(target.getContent());
+            assertThat(responseTitle).isEqualTo(targetTitle);
         }
-
     }
 }

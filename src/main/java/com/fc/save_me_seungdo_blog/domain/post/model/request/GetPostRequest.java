@@ -28,5 +28,6 @@ public class GetPostRequest {
     @NotNull
     private DirectionEnum direction;
 
+    @NotNull
     private String keyword;
 }
