@@ -1,5 +1,6 @@
 package com.fc.save_me_seungdo_blog.global.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fc.save_me_seungdo_blog.global.security.jwt.JwtFilter;
 import com.fc.save_me_seungdo_blog.global.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
 
     @Bean
@@ -38,7 +40,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/post").permitAll()
                 .anyRequest().authenticated())
             .addFilterAt(
-                new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
+                new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, objectMapper),
                 UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class)
             .sessionManagement((session) -> session
