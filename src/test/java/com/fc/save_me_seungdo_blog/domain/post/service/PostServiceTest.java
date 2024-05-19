@@ -204,7 +204,7 @@ class PostServiceTest {
 
 
         // when
-        Api<?> result = postService.remove(id);
+        Api<?> result = postService.delete(id);
 
         // then
         verify(postRepository).delete(post);

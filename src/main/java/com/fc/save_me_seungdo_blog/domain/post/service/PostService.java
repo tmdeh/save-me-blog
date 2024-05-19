@@ -49,13 +49,12 @@ public class PostService {
             Sort.by(request.getDirection().getValue(),
                 request.getSortBy().name()));
 
-        Page<PostResponse> page = postRepository.findAllByTitleContaining(request.getKeyword(), pageable).map(post -> PostResponse.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .build());
-
-
+        Page<PostResponse> page = postRepository.findAllByTitleContaining(request.getKeyword(),
+            pageable).map(post -> PostResponse.builder()
+            .id(post.getId())
+            .title(post.getTitle())
+            .content(post.getContent())
+            .build());
 
         return Api.OK(page);
 
@@ -76,7 +75,7 @@ public class PostService {
     }
 
     @Transactional
-    public Api<?> remove(long id) {
+    public Api<?> delete(long id) {
         Post post = postRepository.findById(id)
             .orElseThrow(() -> new CustomApiException(PostErrorCode.NOT_FOUND));
 
