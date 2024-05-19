@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @Slf4j
@@ -56,6 +57,12 @@ public class Api<T> {
     // 예외 응답
     public static Api<?> EXCEPTION(CustomApiException exception) {
         Result result = new Result(exception.getStatusCode().value(), exception.getErrorMessage());
+        return new Api<>(result, null);
+    }
+
+    // 인증 예외 응답
+    public static Api<?> EXCEPTION(AuthenticationException exception) {
+        Result result = new Result(HttpStatus.UNAUTHORIZED.value(), exception.getMessage());
         return new Api<>(result, null);
     }
 

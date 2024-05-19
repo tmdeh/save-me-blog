@@ -2,8 +2,6 @@ package com.fc.save_me_seungdo_blog.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fc.save_me_seungdo_blog.domain.auth.model.dto.CustomUserDetails;
-import com.fc.save_me_seungdo_blog.global.exception.CustomApiException;
-import com.fc.save_me_seungdo_blog.global.exception.code.AuthErrorCode;
 import com.fc.save_me_seungdo_blog.global.model.response.Api;
 import com.fc.save_me_seungdo_blog.global.security.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -69,7 +67,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         throws IOException {
         response.setContentType("application/json; charset=UTF-8");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        String responseBody = objectMapper.writeValueAsString(Api.EXCEPTION(new CustomApiException(AuthErrorCode.MISS_MATCH)));
+        String responseBody = objectMapper.writeValueAsString(Api.EXCEPTION(failed));
 
         // 응답 전송
         response.getWriter().write(responseBody);
