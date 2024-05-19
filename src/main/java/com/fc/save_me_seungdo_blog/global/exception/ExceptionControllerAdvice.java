@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ExceptionControllerAdvice {
 
+    // 유효성 검사 예외 처리
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Api<?>> methodArgumentNotValidException(MethodArgumentNotValidException e) {
         return ResponseEntity.status(e.getStatusCode()).body(Api.VALID_EXCEPTION(e));
