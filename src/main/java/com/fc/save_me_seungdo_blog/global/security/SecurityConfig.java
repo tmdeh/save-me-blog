@@ -5,6 +5,7 @@ import com.fc.save_me_seungdo_blog.global.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,9 +33,12 @@ public class SecurityConfig {
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/login", "/sign-up", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
+                .requestMatchers("/login", "/sign-up", "/v3/api-docs/**", "/swagger-ui/**",
+                    "/swagger-resources/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/post").permitAll()
                 .anyRequest().authenticated())
-            .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
+            .addFilterAt(
+                new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
                 UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class)
             .sessionManagement((session) -> session
