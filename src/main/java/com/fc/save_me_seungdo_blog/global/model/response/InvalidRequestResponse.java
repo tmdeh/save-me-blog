@@ -7,5 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class InvalidRequestResponse {
     private String message;
-    private String required;
+    private String target;
 }

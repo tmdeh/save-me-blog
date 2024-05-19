@@ -45,7 +45,7 @@ public class Api<T> {
             MethodArgumentNotValidException exception) {
         List<InvalidRequestResponse> list = exception.getFieldErrors().stream()
                 .map(fieldError ->
-                        new InvalidRequestResponse(fieldError.getRejectedValue()+ "는 잘못된 파라미터입니다.", fieldError.getField())
+                        new InvalidRequestResponse(fieldError.getDefaultMessage(), fieldError.getField())
         ).toList();
         ProblemDetail body = exception.getBody();
         Result result = new Result(body.getStatus(), body.getDetail());
