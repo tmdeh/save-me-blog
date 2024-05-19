@@ -40,10 +40,10 @@ public class PostService {
     public Api<Page<PostResponse>> getList(GetPostRequest request) {
 
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize(),
-            Sort.by(Sort.Direction.fromString(request.getDirection().name()),
+            Sort.by(request.getDirection().getValue(),
                 request.getSortBy().name()));
 
-        return Api.OK(postRepository.findAll(pageable).map(post -> PostResponse.builder()
+        return Api.OK(postRepository.findAllByTitleContaining(request.getKeyword(), pageable).map(post -> PostResponse.builder()
             .id(post.getId())
             .title(post.getTitle())
             .content(post.getContent())

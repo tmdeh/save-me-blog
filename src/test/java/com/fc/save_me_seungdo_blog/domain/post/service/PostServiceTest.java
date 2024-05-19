@@ -27,6 +27,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -47,7 +48,7 @@ class PostServiceTest {
         String content = "테스트 내용";
 
         CreatePostRequest request = new CreatePostRequest(title, content);
-        Mockito.when(postRepository.save(Mockito.any(Post.class))).thenReturn(new Post(0L, title, content));
+        when(postRepository.save(Mockito.any(Post.class))).thenReturn(new Post(0L, title, content));
 
         // when
         Api<PostResponse> response = postService.create(request);
@@ -87,7 +88,7 @@ class PostServiceTest {
             PageRequest pageable = PageRequest.of(page, size, Sort.by(DirectionEnum.asc.getValue(), SortByEnum.id.name()));
             PageImpl<Post> pageImpl = new PageImpl<>(posts.subList(start, end), pageable, postCount);
 
-            Mockito.when(postRepository.findAll(ArgumentMatchers.any(Pageable.class))).thenReturn(pageImpl);
+            when(postRepository.findAll(ArgumentMatchers.any(Pageable.class))).thenReturn(pageImpl);
 
             // when
             Api<Page<PostResponse>> result = postService.getList(request);
@@ -115,9 +116,51 @@ class PostServiceTest {
     @DisplayName("블로그 검색하기")
     public void testSearch() {
         // given
+        final int size = 5;
+        final int postCount = 5;
+        final String targetStr = "hello";
+
+
+        GetPostRequest request = new GetPostRequest(0, size, SortByEnum.id, DirectionEnum.asc, targetStr);
+
+        List<Post> posts = new ArrayList<>();
+        for (int i = 0; i < postCount; i++) {
+            if(i % 2 == 0) {
+                posts.add(new Post((long) i, targetStr + "Title" + i, "Content" + i));
+                continue;
+            }
+            posts.add(new Post((long) i, "Title" + i, "Content" + i));
+        }
+
+
+        List<PostResponse> targets = new ArrayList<>();
+        for (int i = 0; i < postCount; i+=2) {
+            targets.add(new PostResponse((long) i, targetStr + "Title" + i, "Content" + i));
+        }
+
+        when(postRepository.findAll(ArgumentMatchers.any(Pageable.class))).thenReturn(new PageImpl<>(posts));
 
         // when
+        Api<Page<PostResponse>> list = postService.getList(request);
+
+
+        list.getBody().getContent().forEach(t -> System.out.println(t.getTitle()));
+
 
         // then
+        verify(postRepository, times(1)).findAll(ArgumentMatchers.any(Pageable.class));
+
+        assertThat(list).isNotNull();
+        assertThat(list.getResult().getCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(list.getBody().getTotalElements()).isEqualTo(postCount);
+
+        for (int i = 0; i < list.getBody().getContent().size(); i++) {
+            PostResponse response = list.getBody().getContent().get(i);
+            PostResponse target = targets.get(i);
+
+            assertThat(response.getTitle()).isEqualTo(target.getTitle());
+            assertThat(response.getContent()).isEqualTo(target.getContent());
+        }
+
     }
 }
