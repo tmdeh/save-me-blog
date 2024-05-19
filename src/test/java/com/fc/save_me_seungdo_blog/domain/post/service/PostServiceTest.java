@@ -4,11 +4,13 @@ package com.fc.save_me_seungdo_blog.domain.post.service;
 import com.fc.save_me_seungdo_blog.domain.post.model.entity.Post;
 import com.fc.save_me_seungdo_blog.domain.post.model.request.CreatePostRequest;
 import com.fc.save_me_seungdo_blog.domain.post.model.request.GetPostRequest;
+import com.fc.save_me_seungdo_blog.domain.post.model.request.UpdatePostReqeust;
 import com.fc.save_me_seungdo_blog.domain.post.model.response.PostResponse;
 import com.fc.save_me_seungdo_blog.domain.post.model.type.DirectionEnum;
 import com.fc.save_me_seungdo_blog.domain.post.model.type.SortByEnum;
 import com.fc.save_me_seungdo_blog.domain.post.repository.PostRepository;
 import com.fc.save_me_seungdo_blog.global.model.response.Api;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -142,21 +144,50 @@ class PostServiceTest {
         when(postRepository.findAllByTitleContaining(targetStr, pageable)).thenReturn(new PageImpl<>(targets));
 
         // when
-        Api<Page<PostResponse>> list = postService.getList(request);
+        Api<Page<PostResponse>> result = postService.getList(request);
 
 
         // then
         verify(postRepository, times(1)).findAllByTitleContaining(targetStr, pageable);
 
-        assertThat(list).isNotNull();
-        assertThat(list.getResult().getCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(list.getBody().getTotalElements()).isEqualTo(targets.size());
+        assertThat(result).isNotNull();
+        assertThat(result.getResult().getCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(result.getBody().getTotalElements()).isEqualTo(targets.size());
 
-        for(int i = 0; i < list.getBody().getContent().size(); i++) {
-            String responseTitle = list.getBody().getContent().get(i).getTitle();
+        for(int i = 0; i < result.getBody().getContent().size(); i++) {
+            String responseTitle = result.getBody().getContent().get(i).getTitle();
             String targetTitle = targets.get(i).getTitle();
 
             assertThat(responseTitle).isEqualTo(targetTitle);
         }
     }
+
+    @Test
+    @DisplayName("블로그 업데이트하기")
+    public void testUpdate() {
+        // given
+        long id = 1L;
+        String oldTitle = "title";
+        String oldContent = "content";
+
+        String newTitle = "newTitle";
+        String newContent = "newContent";
+
+        UpdatePostReqeust request = new UpdatePostReqeust(id, newTitle, newContent);
+        Post post = new Post(id, oldTitle, oldContent);
+        when(postRepository.findById(id)).thenReturn(Optional.of(post));
+
+        // when
+        Api<PostResponse> result = postService.update(request);
+
+        // then
+        verify(postRepository).findById(id);
+        assertThat(result).isNotNull();
+        assertThat(result.getResult().getCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(result.getBody()).isNotNull();
+        assertThat(result.getBody().getId()).isEqualTo(id);
+        assertThat(result.getBody().getTitle()).isEqualTo(newTitle);
+        assertThat(result.getBody().getContent()).isEqualTo(newContent);
+    }
+
 }

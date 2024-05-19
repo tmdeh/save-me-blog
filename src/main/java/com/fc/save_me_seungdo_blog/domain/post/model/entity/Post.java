@@ -1,5 +1,6 @@
 package com.fc.save_me_seungdo_blog.domain.post.model.entity;
 
+import com.fc.save_me_seungdo_blog.domain.post.model.request.UpdatePostReqeust;
 import com.fc.save_me_seungdo_blog.global.model.entity.TimeStamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,6 +36,11 @@ public class Post extends TimeStamp {
     @Lob
     @Column(name = "content", nullable = false)
     private String content;
+
+    public void update(UpdatePostReqeust reqeust) {
+        this.title = reqeust.getTitle();
+        this.content = reqeust.getContent();
+    }
 
 //    @NotNull
 //    @ManyToOne(fetch = FetchType.LAZY, optional = false)
