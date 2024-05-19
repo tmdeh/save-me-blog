@@ -55,7 +55,7 @@ public class Api<T> {
 
     // 예외 응답
     public static Api<?> EXCEPTION(CustomApiException exception) {
-        Result result = new Result(exception.getStatusCode().value(), exception.getMessage());
+        Result result = new Result(exception.getStatusCode().value(), exception.getErrorMessage());
         return new Api<>(result, null);
     }
 
