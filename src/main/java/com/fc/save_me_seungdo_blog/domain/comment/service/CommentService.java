@@ -59,7 +59,8 @@ public class CommentService {
 
     @Transactional
     public Api<CommentResponse> update(Long commentId, UpdateCommentRequest request) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Comment comment = commentRepository.findByIdAndUserEmail(commentId, email).orElseThrow(() ->
             new CustomApiException(CommentErrorCode.NOT_FOUND));
 
         comment.updateContent(request.getContent());
@@ -90,7 +91,8 @@ public class CommentService {
 
     @Transactional
     public Api<?> delete(Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Comment comment = commentRepository.findByIdAndUserEmail(commentId, email)
             .orElseThrow(() -> new CustomApiException(CommentErrorCode.NOT_FOUND));
         commentRepository.delete(comment);
         return Api.OK();
