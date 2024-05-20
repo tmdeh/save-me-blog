@@ -3,6 +3,7 @@ package com.fc.save_me_seungdo_blog.global.model.response;
 import com.fc.save_me_seungdo_blog.global.exception.CustomApiException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import io.jsonwebtoken.JwtException;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -65,6 +66,13 @@ public class Api<T> {
         Result result = new Result(HttpStatus.UNAUTHORIZED.value(), exception.getMessage());
         return new Api<>(result, null);
     }
+
+    // jwt 예외 응답
+    public static Api<?> EXCEPTION(JwtException exception) {
+        Result result = new Result(HttpStatus.UNAUTHORIZED.value(), exception.getMessage());
+        return new Api<>(result, null);
+    }
+
 
     // 서버 에러 응답
     public static Api<?> ERROR(Exception e) {

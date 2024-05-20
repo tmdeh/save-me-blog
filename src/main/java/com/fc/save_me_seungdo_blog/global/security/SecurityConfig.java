@@ -1,6 +1,7 @@
 package com.fc.save_me_seungdo_blog.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fc.save_me_seungdo_blog.global.security.jwt.JwtExceptionFilter;
 import com.fc.save_me_seungdo_blog.global.security.jwt.JwtFilter;
 import com.fc.save_me_seungdo_blog.global.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -23,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
     private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
 
@@ -43,6 +46,8 @@ public class SecurityConfig {
                 new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, objectMapper),
                 UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class)
+            .addFilterBefore(new JwtExceptionFilter(objectMapper), JwtFilter.class)
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
             .sessionManagement((session) -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
