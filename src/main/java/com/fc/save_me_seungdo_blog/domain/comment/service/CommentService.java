@@ -88,4 +88,12 @@ public class CommentService {
             .build()).toList());
     }
 
+    @Transactional
+    public Api<?> delete(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+            .orElseThrow(() -> new CustomApiException(CommentErrorCode.NOT_FOUND));
+        commentRepository.delete(comment);
+        return Api.OK();
+    }
+
 }
