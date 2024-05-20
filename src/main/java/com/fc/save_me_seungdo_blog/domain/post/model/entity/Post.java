@@ -1,8 +1,10 @@
 package com.fc.save_me_seungdo_blog.domain.post.model.entity;
 
 import com.fc.save_me_seungdo_blog.domain.auth.model.entity.User;
+import com.fc.save_me_seungdo_blog.domain.comment.model.entity.Comment;
 import com.fc.save_me_seungdo_blog.domain.post.model.request.UpdatePostReqeust;
 import com.fc.save_me_seungdo_blog.global.model.entity.TimeStamp;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,9 +14,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 import lombok.*;
 
 @Getter
@@ -49,5 +53,18 @@ public class Post extends TimeStamp {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Comment> comments;
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+        comment.setPost(this);
+    }
+
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+        comment.setPost(null);
+    }
 
 }

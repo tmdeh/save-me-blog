@@ -72,6 +72,14 @@ public class PostService {
 
     }
 
+
+    @Transactional(readOnly = true)
+    public Api<PostResponse> getDetail(Long id) {
+        Post post = postRepository.findById(id)
+            .orElseThrow(() -> new CustomApiException(PostErrorCode.NOT_FOUND));
+        return Api.OK(PostResponse.toResponse(post));
+    }
+
     @Transactional
     public Api<PostResponse> update(UpdatePostReqeust request) {
 

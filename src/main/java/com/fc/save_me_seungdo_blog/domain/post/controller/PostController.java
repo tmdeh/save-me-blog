@@ -38,6 +38,11 @@ public class PostController {
         return ResponseEntity.ok(postService.getList(getPostRequest));
     }
 
+    @GetMapping("/{postId}")
+    public ResponseEntity<Api<PostResponse>> get(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.getDetail(postId));
+    }
+
     @PutMapping
     public ResponseEntity<Api<PostResponse>> update(
         @Valid
