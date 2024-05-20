@@ -18,10 +18,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Entity
 @Builder
 @AllArgsConstructor
@@ -48,5 +46,9 @@ public class Comment extends TimeStamp {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 
 }
