@@ -5,7 +5,7 @@ import com.fc.save_me_seungdo_blog.domain.post.model.entity.Post;
 import com.fc.save_me_seungdo_blog.domain.post.model.request.CreatePostRequest;
 import com.fc.save_me_seungdo_blog.domain.post.model.request.GetPostRequest;
 import com.fc.save_me_seungdo_blog.domain.post.model.request.UpdatePostReqeust;
-import com.fc.save_me_seungdo_blog.domain.post.model.response.PostResponse;
+import com.fc.save_me_seungdo_blog.domain.post.model.response.PostDetailResponse;
 import com.fc.save_me_seungdo_blog.domain.post.model.type.DirectionEnum;
 import com.fc.save_me_seungdo_blog.domain.post.model.type.SortByEnum;
 import com.fc.save_me_seungdo_blog.domain.post.repository.PostRepository;
@@ -52,7 +52,7 @@ class PostServiceTest {
         when(postRepository.save(Mockito.any(Post.class))).thenReturn(new Post(0L, title, content));
 
         // when
-        Api<PostResponse> response = postService.create(request);
+        Api<PostDetailResponse> response = postService.create(request);
 
         // then
         verify(postRepository, times(1)).save(Mockito.any(Post.class));
@@ -92,7 +92,7 @@ class PostServiceTest {
             when(postRepository.findAllByTitleContaining("", pageable)).thenReturn(pageImpl);
 
             // when
-            Api<Page<PostResponse>> result = postService.getList(request);
+            Api<Page<PostDetailResponse>> result = postService.getList(request);
 
             // then
             assertThat(result.getResult().getCode()).isEqualTo(HttpStatus.OK.value());
@@ -100,10 +100,10 @@ class PostServiceTest {
             assertThat(result.getBody().getTotalPages()).isEqualTo(pageCount);
             assertThat(result.getBody().getContent().size()).isEqualTo(end - start);
 
-            List<PostResponse> responses = result.getBody().getContent();
+            List<PostDetailResponse> responses = result.getBody().getContent();
 
             for (int i = 0; i < responses.size(); i++) {
-                PostResponse response = responses.get(i);
+                PostDetailResponse response = responses.get(i);
                 Post originalPost = posts.get(start + i);
                 assertThat(response.getId()).isEqualTo(originalPost.getId());
                 assertThat(response.getTitle()).isEqualTo(originalPost.getTitle());
@@ -144,7 +144,7 @@ class PostServiceTest {
         when(postRepository.findAllByTitleContaining(targetStr, pageable)).thenReturn(new PageImpl<>(targets));
 
         // when
-        Api<Page<PostResponse>> result = postService.getList(request);
+        Api<Page<PostDetailResponse>> result = postService.getList(request);
 
 
         // then
@@ -178,7 +178,7 @@ class PostServiceTest {
         when(postRepository.findById(id)).thenReturn(Optional.of(post));
 
         // when
-        Api<PostResponse> result = postService.update(request);
+        Api<PostDetailResponse> result = postService.update(request);
 
         // then
         verify(postRepository).findById(id);

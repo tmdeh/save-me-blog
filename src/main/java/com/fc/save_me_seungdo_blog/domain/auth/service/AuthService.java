@@ -34,10 +34,6 @@ public class AuthService {
             .name(request.getName())
             .build());
 
-         return Api.SUCCESS(HttpStatus.CREATED, UserResponse.builder()
-             .id(user.getId())
-             .email(user.getEmail())
-             .name(user.getName())
-             .build());
+         return Api.SUCCESS(HttpStatus.CREATED, UserResponse.toResponse(user));
     }
 }

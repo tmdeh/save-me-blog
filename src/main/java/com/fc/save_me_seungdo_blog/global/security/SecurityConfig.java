@@ -38,7 +38,7 @@ public class SecurityConfig {
             .authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/login", "/sign-up", "/v3/api-docs/**", "/swagger-ui/**",
                     "/swagger-resources/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/post").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/post", "/api/post/{postId}").permitAll()
                 .anyRequest().authenticated())
             .addFilterAt(
                 new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, objectMapper),

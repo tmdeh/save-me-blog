@@ -1,7 +1,6 @@
 package com.fc.save_me_seungdo_blog.domain.comment.service;
 
 import com.fc.save_me_seungdo_blog.domain.auth.model.entity.User;
-import com.fc.save_me_seungdo_blog.domain.auth.model.response.UserResponse;
 import com.fc.save_me_seungdo_blog.domain.auth.repository.UserRepository;
 import com.fc.save_me_seungdo_blog.domain.comment.model.entity.Comment;
 import com.fc.save_me_seungdo_blog.domain.comment.model.request.CreateCommentRequest;
@@ -46,14 +45,7 @@ public class CommentService {
             .content(request.getContent())
             .build());
 
-        return Api.SUCCESS(HttpStatus.CREATED, CommentResponse.builder()
-            .id(comment.getId())
-            .content(comment.getContent())
-            .user(UserResponse.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .build()).build());
+        return Api.SUCCESS(HttpStatus.CREATED, CommentResponse.toResponse(comment));
     }
 
 
@@ -65,28 +57,12 @@ public class CommentService {
 
         comment.updateContent(request.getContent());
 
-        return Api.OK(CommentResponse.builder()
-            .id(comment.getId())
-            .content(comment.getContent())
-            .user(UserResponse.builder()
-                .id(comment.getUser().getId())
-                .name(comment.getUser().getName())
-                .email(comment.getUser().getEmail())
-                .build())
-            .build());
+        return Api.OK(CommentResponse.toResponse(comment));
     }
 
     @Transactional(readOnly = true)
     public Api<List<CommentResponse>> readAll(Long postId) {
-        return Api.OK(commentRepository.findAllByPostId(postId).stream().map(comment -> CommentResponse.builder()
-            .id(comment.getId())
-            .user(UserResponse.builder()
-                .id(comment.getUser().getId())
-                .email(comment.getUser().getEmail())
-                .name(comment.getUser().getName())
-                .build())
-            .content(comment.getContent())
-            .build()).toList());
+        return Api.OK(commentRepository.findAllByPostId(postId).stream().map(CommentResponse::toResponse).toList());
     }
 
     @Transactional

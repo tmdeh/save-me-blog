@@ -3,6 +3,7 @@ package com.fc.save_me_seungdo_blog.domain.post.controller;
 import com.fc.save_me_seungdo_blog.domain.post.model.request.CreatePostRequest;
 import com.fc.save_me_seungdo_blog.domain.post.model.request.GetPostRequest;
 import com.fc.save_me_seungdo_blog.domain.post.model.request.UpdatePostReqeust;
+import com.fc.save_me_seungdo_blog.domain.post.model.response.PostDetailResponse;
 import com.fc.save_me_seungdo_blog.domain.post.model.response.PostResponse;
 import com.fc.save_me_seungdo_blog.domain.post.service.PostService;
 import com.fc.save_me_seungdo_blog.global.model.response.Api;
@@ -21,7 +22,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<Api<PostResponse>> create(
+    public ResponseEntity<Api<PostDetailResponse>> create(
             @Valid
             @RequestBody
             CreatePostRequest createPostRequest
@@ -39,17 +40,18 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<Api<PostResponse>> get(@PathVariable Long postId) {
+    public ResponseEntity<Api<PostDetailResponse>> get(@PathVariable Long postId) {
         return ResponseEntity.ok(postService.getDetail(postId));
     }
 
-    @PutMapping
+    @PutMapping("/{postId}")
     public ResponseEntity<Api<PostResponse>> update(
+        @PathVariable Long postId,
         @Valid
         @RequestBody
         UpdatePostReqeust reqeust
     ) {
-        return ResponseEntity.ok(postService.update(reqeust));
+        return ResponseEntity.ok(postService.update(postId, reqeust));
     }
 
     @DeleteMapping("/{id}")

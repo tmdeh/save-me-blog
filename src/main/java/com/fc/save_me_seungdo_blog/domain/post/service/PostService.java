@@ -6,12 +6,14 @@ import com.fc.save_me_seungdo_blog.domain.post.model.entity.Post;
 import com.fc.save_me_seungdo_blog.domain.post.model.request.CreatePostRequest;
 import com.fc.save_me_seungdo_blog.domain.post.model.request.GetPostRequest;
 import com.fc.save_me_seungdo_blog.domain.post.model.request.UpdatePostReqeust;
+import com.fc.save_me_seungdo_blog.domain.post.model.response.PostDetailResponse;
 import com.fc.save_me_seungdo_blog.domain.post.model.response.PostResponse;
 import com.fc.save_me_seungdo_blog.domain.post.repository.PostRepository;
 import com.fc.save_me_seungdo_blog.global.exception.CustomApiException;
 import com.fc.save_me_seungdo_blog.global.exception.code.AuthErrorCode;
 import com.fc.save_me_seungdo_blog.global.exception.code.PostErrorCode;
 import com.fc.save_me_seungdo_blog.global.model.response.Api;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,7 +32,7 @@ public class PostService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Api<PostResponse> create(CreatePostRequest request) {
+    public Api<PostDetailResponse> create(CreatePostRequest request) {
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -42,15 +44,11 @@ public class PostService {
                 .user(user)
                 .title(request.getTitle())
                 .content(request.getContent())
+                .comments(new ArrayList<>())
                 .build()
         );
 
-        return Api.SUCCESS(HttpStatus.CREATED, PostResponse.builder()
-            .id(post.getId())
-            .title(post.getTitle())
-            .content(post.getContent())
-            .build()
-        );
+        return Api.SUCCESS(HttpStatus.CREATED, PostDetailResponse.toResponse(post));
     }
 
 
@@ -62,11 +60,7 @@ public class PostService {
                 request.getSortBy().name()));
 
         Page<PostResponse> page = postRepository.findAllByTitleContaining(request.getKeyword(),
-            pageable).map(post -> PostResponse.builder()
-            .id(post.getId())
-            .title(post.getTitle())
-            .content(post.getContent())
-            .build());
+            pageable).map(PostResponse::toResponse);
 
         return Api.OK(page);
 
@@ -74,29 +68,24 @@ public class PostService {
 
 
     @Transactional(readOnly = true)
-    public Api<PostResponse> getDetail(Long id) {
+    public Api<PostDetailResponse> getDetail(Long id) {
         Post post = postRepository.findById(id)
             .orElseThrow(() -> new CustomApiException(PostErrorCode.NOT_FOUND));
-        return Api.OK(PostResponse.toResponse(post));
+        return Api.OK(PostDetailResponse.toResponse(post));
     }
 
     @Transactional
-    public Api<PostResponse> update(UpdatePostReqeust request) {
+    public Api<PostResponse> update(Long postId, UpdatePostReqeust request) {
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new CustomApiException(AuthErrorCode.NOT_FOUND));
 
-        Post post = postRepository.findByIdAndUser(request.getId(), user)
+        Post post = postRepository.findByIdAndUser(postId, user)
             .orElseThrow(() -> new CustomApiException(PostErrorCode.NOT_FOUND));
         post.update(request);
 
-        return Api.OK(PostResponse.builder()
-            .id(post.getId())
-            .title(post.getTitle())
-            .content(post.getContent())
-            .build()
-        );
+        return Api.OK(PostResponse.toResponse(post));
     }
 
     @Transactional
