@@ -6,9 +6,11 @@ import com.fc.save_me_seungdo_blog.domain.comment.model.response.CommentResponse
 import com.fc.save_me_seungdo_blog.domain.comment.service.CommentService;
 import com.fc.save_me_seungdo_blog.global.model.response.Api;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,7 +25,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/{postId}")
+    @PostMapping("/post/{postId}")
     public ResponseEntity<Api<CommentResponse>> create(
         @PathVariable
         Long postId,
@@ -34,6 +36,11 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(commentService.create(postId, request));
     }
 
+
+    @GetMapping("/post/{postId}")
+    public ResponseEntity<Api<List<CommentResponse>>> get(@PathVariable Long postId) {
+        return ResponseEntity.ok(commentService.readAll(postId));
+    }
 
     @PutMapping("/{commentId}")
     public ResponseEntity<Api<CommentResponse>> update(

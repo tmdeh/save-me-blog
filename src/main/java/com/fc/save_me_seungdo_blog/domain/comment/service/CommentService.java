@@ -15,6 +15,7 @@ import com.fc.save_me_seungdo_blog.global.exception.code.AuthErrorCode;
 import com.fc.save_me_seungdo_blog.global.exception.code.CommentErrorCode;
 import com.fc.save_me_seungdo_blog.global.exception.code.PostErrorCode;
 import com.fc.save_me_seungdo_blog.global.model.response.Api;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -72,6 +73,19 @@ public class CommentService {
                 .email(comment.getUser().getEmail())
                 .build())
             .build());
+    }
+
+    @Transactional(readOnly = true)
+    public Api<List<CommentResponse>> readAll(Long postId) {
+        return Api.OK(commentRepository.findAllByPostId(postId).stream().map(comment -> CommentResponse.builder()
+            .id(comment.getId())
+            .user(UserResponse.builder()
+                .id(comment.getUser().getId())
+                .email(comment.getUser().getEmail())
+                .name(comment.getUser().getName())
+                .build())
+            .content(comment.getContent())
+            .build()).toList());
     }
 
 }
