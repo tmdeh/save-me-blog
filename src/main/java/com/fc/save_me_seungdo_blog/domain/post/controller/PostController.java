@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
@@ -26,11 +25,12 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<Api<PostDetailResponse>> create(
-            @Valid
-            @RequestBody
-            CreatePostRequest createPostRequest
+        @Valid
+        @RequestBody
+        CreatePostRequest createPostRequest
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(postService.create(createPostRequest));
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(postService.create(createPostRequest));
     }
 
     @GetMapping
@@ -63,9 +63,12 @@ public class PostController {
     }
 
 
-    @PostMapping("/file")
-    public ResponseEntity<Api<?>> fileUpload(MultipartFile[] files) throws IOException {
-        return ResponseEntity.ok(postService.fileUpload(files));
+    @PostMapping("/{postId}/file")
+    public ResponseEntity<Api<?>> fileUpload(
+        @RequestPart MultipartFile[] files,
+        @PathVariable Long postId) {
+
+        return ResponseEntity.ok(postService.fileUpload(postId, files));
     }
 
 }

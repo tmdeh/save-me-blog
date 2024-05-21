@@ -1,5 +1,6 @@
 package com.fc.save_me_seungdo_blog;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.io.File;
 
+@Slf4j
 @SpringBootApplication
 @EnableJpaAuditing
 public class SaveMeSeungdoBlogApplication {
@@ -28,9 +30,9 @@ public class SaveMeSeungdoBlogApplication {
             if (!uploadDir.exists()) {
                 boolean created = uploadDir.mkdirs();
                 if (created) {
-                    System.out.println("Upload directory created at " + path);
+                    log.info("Upload directory created at {}", path);
                 } else {
-                    System.err.println("Failed to create upload directory at " + path);
+                    log.error("Failed to create upload directory at {}", path);
                 }
             }
         };
