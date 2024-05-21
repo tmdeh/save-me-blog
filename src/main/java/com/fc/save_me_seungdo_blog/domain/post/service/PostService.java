@@ -44,8 +44,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final FileRepository fileRepository;
 
-    @Value("${user.dir}/posts")
-    private String path;
+
 
     @Transactional
     public Api<PostDetailResponse> create(CreatePostRequest request) {
@@ -117,6 +116,9 @@ public class PostService {
         return Api.OK();
     }
 
+    @Value("${user.dir}/src/main/resources/static/posts")
+    private String path;
+
     @Transactional
     public Api<?> fileUpload(Long postId, MultipartFile[] files) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -137,7 +139,7 @@ public class PostService {
                 file.transferTo(new java.io.File(fullPath));
 
                 // 파일 정보를 DB에 저장
-                fileRepository.save(new File(fullPath, post));
+                fileRepository.save(new File( "posts/" + uuidFileName + fileName, post));
 
                 log.info("파일 저장 위치: {}", fullPath);
             } catch (IOException e) {

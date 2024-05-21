@@ -65,8 +65,11 @@ public class PostController {
 
     @PostMapping("/{postId}/file")
     public ResponseEntity<Api<?>> fileUpload(
-        @RequestPart MultipartFile[] files,
-        @PathVariable Long postId) {
+        @RequestPart
+        MultipartFile[] files,
+
+        @PathVariable
+        Long postId) {
 
         return ResponseEntity.ok(postService.fileUpload(postId, files));
     }

@@ -26,7 +26,7 @@ public class SaveMeSeungdoBlogApplication {
     @Bean
     CommandLineRunner init() {
         return args -> {
-            File uploadDir = new File("posts");
+            File uploadDir = new File("static/posts");
             if (!uploadDir.exists()) {
                 boolean created = uploadDir.mkdirs();
                 if (created) {
