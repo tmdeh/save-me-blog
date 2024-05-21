@@ -13,8 +13,14 @@ import com.fc.save_me_seungdo_blog.global.exception.CustomApiException;
 import com.fc.save_me_seungdo_blog.global.exception.code.AuthErrorCode;
 import com.fc.save_me_seungdo_blog.global.exception.code.PostErrorCode;
 import com.fc.save_me_seungdo_blog.global.model.response.Api;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +29,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -98,6 +106,22 @@ public class PostService {
             .orElseThrow(() -> new CustomApiException(PostErrorCode.NOT_FOUND));
 
         postRepository.delete(post);
+        return Api.OK();
+    }
+
+    @Transactional
+    public Api<?> fileUpload(MultipartFile[] files) throws IOException {
+
+        Arrays.stream(files).forEach(file -> {
+            String uuidFileName = UUID.randomUUID().toString();
+            String fileExt = file.getName().replaceAll("^.*\\.(.*)$", "$1");
+
+            log.info("fileExt : {}", fileExt);
+
+        });
+
+
+
         return Api.OK();
     }
 }
