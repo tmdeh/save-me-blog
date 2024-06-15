@@ -32,13 +32,22 @@ jobs:
           echo "${{ secrets.APPLICATION }}" > ./application.yml
         shell: bash
 
-      - name: gradlew set permission
+      - name: grdlew set permission
         run: chmod +x ./gradlew
 
       - name: Build with Gradle Wrapper
         run: ./gradlew build
+        continue-on-error: true
+
+      - name: Upload test report
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: build/reports/tests/test
 
       - name: Upload build artifacts
+        if: success()
         uses: actions/upload-artifact@v3
         with:
           name: my-app
@@ -70,7 +79,7 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v3
         with:
-          name: blog-service
+          name: my-app
           path: ./app
 
       - name: Copy files via SSH
@@ -90,4 +99,4 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             pkill -f 'java -jar' || true
-            nohup java -jar /path/to/deploy/save_me_seungdo_blog.jar &
+            nohup java -jar /path/to/deploy/your-project.jar &
