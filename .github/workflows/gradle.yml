@@ -41,13 +41,6 @@ jobs:
 
     - name: Set permission
       run: chmod +x gradlew
-
-    - name: Create application.yml
-      run: |
-        mkdir -p src/main/resources
-        echo "${{ secrets.APPLICATION }}" > src/main/resources/application.yml
-        cat src/main/resources/application.yml
-        
     
     - name: Build with Gradle Wrapper
       run: ./gradlew build
