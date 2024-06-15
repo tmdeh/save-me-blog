@@ -32,7 +32,7 @@ jobs:
           echo "${{ secrets.APPLICATION }}" > ./application.yml
         shell: bash
 
-      - name: grdlew set permission
+      - name: gradlew set permission
         run: chmod +x ./gradlew
 
       - name: Build with Gradle Wrapper
