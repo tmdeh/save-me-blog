@@ -67,22 +67,26 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
 
     steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: my-app
-          path: ./app
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Copy files via SSH
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Tar all files
+        run: tar -cvf /tmp/295568076/Y2k8x8is8B.tar .
+
+      - name: Copy files via SCP
         uses: appleboy/scp-action@v0.1.1
         with:
           host: yusuengdo.ddns.net
           username: tmdeh
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "./app/*.jar"
+          source: "/tmp/295568076/Y2k8x8is8B.tar"
           target: "/path/to/deploy/"
 
       - name: Execute remote SSH commands
@@ -93,4 +97,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             pkill -f 'java -jar' || true
-            nohup java -jar /path/to/deploy/your-project.jar &
+            tar -xvf /path/to/deploy/Y2k8x8is8B.tar -C /path/to/deploy/
+            nohup java -jar /path/to/deploy/save_me_seungdo_blog.jar &
