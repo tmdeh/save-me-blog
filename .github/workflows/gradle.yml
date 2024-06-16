@@ -76,7 +76,7 @@ jobs:
     #   run: ./gradlew test -i
     
     - name: Build with Gradle Wrapper
-      run: ./gradlew build -x test
+      run: ./gradlew build
       env:
         SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/blog
         SPRING_DATASOURCE_USERNAME: root
