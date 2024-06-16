@@ -42,13 +42,13 @@ jobs:
 
     
 
-    - name: Create directory
-      run: mkdir -p src/main/resources
+    # - name: Create directory
+    #   run: mkdir -p src/main/resources
 
-    - name: Create application.yml
-      run: |
-        touch ./src/main/resources/application.yml
-        echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
+    # - name: Create application.yml
+    #   run: |
+    #     touch ./src/main/resources/application.yml
+    #     echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
     
     # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
     # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
