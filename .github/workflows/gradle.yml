@@ -34,6 +34,7 @@ jobs:
     - name: Create application.yml
       run: |
         touch src/main/resources/application.yml
+        pwd
         echo "${{ secrets.APPLICATION }}" > src/main/resources/application.yml
     
     # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
